@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
         $start = Carbon::now();
         ModelCar::factory(10)->create();
         dump('ModelCar seeded....................' . $start->diff(Carbon::now())->s . 'sec');
+        $start = Carbon::now();
         RatingCategory::factory(5)->create();
         dump('RatingCategory seeded..............' . $start->diff(Carbon::now())->s . 'sec');
         $start = Carbon::now();
