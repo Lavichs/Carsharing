@@ -17,6 +17,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            $table->string('telNumber', 25);
+            $table->unsignedInteger('status');      // User status: ordinary, temporarily banned
+            $table->integer('score');               // User's cash account
+            $table->unsignedInteger('rating');      // The user's rating, which determines the available fares and cars
+            $table->unique(['email', 'telNumber']);
+
             $table->rememberToken();
             $table->timestamps();
         });
