@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->unsignedInteger('duration');        // rental duration (minutes)
             $table->dateTime('date_of_rent');
-            $table->unsignedInteger('status_id');          // Open, Closed, ClosedWithIncident
+            $table->unsignedInteger('status_id');       // Open, Closed, ClosedWithIncident
             
             $table->uuid('car_id')->nullable(false);
             $table->uuid('user_id')->nullable(false);
