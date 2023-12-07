@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cars', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->unsignedInteger('status');        // The status of the car: moving, waiting, under repair, etc.
             $table->string('engineType', 10);         // Engine type: Internal combustion engine, electric, hybrid
             $table->string('number', 6);              // Three-digit car number
