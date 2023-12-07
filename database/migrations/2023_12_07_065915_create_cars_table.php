@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('region', 3);              // The region in the car number
             $table->unsignedInteger('accidents')->default(0);   // Number of incidents
             $table->date('date_of_create');           // Date of production of the car
-            $table->timestamps();
             $table->unique('number');
 
             $table->unsignedInteger('manufacturer_id');
@@ -36,6 +35,9 @@ return new class extends Migration
             $table->foreign('model_id', 'car_model_fk')->on('model_cars')->references('id');
             $table->foreign('brand_id', 'car_brand_fk')->on('brands')->references('id');
             $table->foreign('category_id', 'car_category_idx')->on('rating_categories')->references('id');
+            
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
