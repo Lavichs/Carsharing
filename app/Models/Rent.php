@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Rent extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'id';
+	protected $keyType = 'string';
 }
