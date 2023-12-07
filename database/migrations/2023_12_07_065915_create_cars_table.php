@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('cars', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->unsignedInteger('status');        // The status of the car: moving, waiting, under repair, etc.
-            $table->string('engineType', 10);         // Engine type: Internal combustion engine, electric, hybrid
+            $table->unsignedInteger('engineType');         // Engine type: Internal combustion engine, electric, hybrid
             $table->string('number', 6);              // Three-digit car number
             $table->string('region', 3);              // The region in the car number
             $table->unsignedInteger('accidents')->default(0);   // Number of incidents
