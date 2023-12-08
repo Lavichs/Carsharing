@@ -23,8 +23,8 @@ return new class extends Migration
             $table->index('car_id', 'rent_car_idx');
             $table->index('user_id', 'rent_user_idx');
 
-            $table->foreign('car_id', 'rent_car_fk')->on('cars')->references('id');
-            $table->foreign('user_id', 'rent_user_fk')->on('users')->references('id');
+            $table->foreign('car_id', 'rent_car_fk')->on('cars')->references('id')->onDelete('cascade');
+            $table->foreign('user_id', 'rent_user_fk')->on('users')->references('id')->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();
