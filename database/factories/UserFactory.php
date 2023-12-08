@@ -34,7 +34,7 @@ class UserFactory extends Factory
 
             'telNumber' => $this->faker->e164PhoneNumber,
             'status' => UserStatusesEnum::randomValue(),
-            'score' => rand(500, 5000),
+            'score' => rand(500, 5000) * 100,
             'rating' => rand(200, 500),
         ];
     }
