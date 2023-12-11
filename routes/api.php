@@ -37,3 +37,26 @@ Route::group([
 Route::group(['namespace' => 'App\Http\Controllers\\', 'middleware' => 'jwt.auth'], function() {
 	//
 });
+
+
+// a test bench for the api
+Route::group(['namespace' => 'App\Http\Controllers\\'], function() {
+	Route::get('/dictionary/cars', 'CarController@allCars');
+	Route::get('/dictionary/car', 'CarController@certainCar');
+
+	Route::get('/dictionary/user', 'UserContorller@index');
+	Route::get('/dictionary/user/rent_history', 'UserContorller@showRentHistory');
+	Route::get('/dictionary/user/operation_history', 'UserContorller@showOperationHistory');
+
+	Route::post('/action/rent_open', 'RentContorller@rentOpen');
+	Route::post('/action/rent_close', 'RentContorller@rentClose');
+	Route::post('/action/adding_funds', 'UserContorller@addingFunds');
+	
+});
+
+
+// "critical" requests with access only for "admins"
+Route::group(['namespace' => 'App\Http\Controllers\\', 'middleware' => 'jwt.auth'], function() {
+	Route::get('/dictionary/delete_car', 'CarController@destroy');
+	Route::get('/dictionary/delete_user', 'UserContorller@destroy');
+});
