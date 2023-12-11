@@ -11,4 +11,13 @@ class Rent extends Model
 
     protected $primaryKey = 'id';
 	protected $keyType = 'string';
+
+	protected $fillable = [
+		'id',
+	    'duration',
+		'date_of_rent',
+		'status_id',
+		'car_id',
+		'user_id',
+    ];
 }
