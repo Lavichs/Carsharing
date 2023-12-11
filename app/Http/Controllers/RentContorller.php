@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use App\Enums\OperationTypesEnum;
 use App\Enums\RentStatusesEnum;
 use App\Models\RatingCategory;
 use Illuminate\Http\Request;
+use App\Models\Operation;
 use App\Models\User;
 use App\Models\Rent;
 use App\Models\Car;
@@ -28,7 +30,6 @@ class RentContorller extends Controller
         $user = Auth::user();
         $params = $request->all();
         $car = (Car::where('id', $params['car'])->get())[0];
-        // $car = (Car::where('id', '8109d9f1-de4c-373e-8687-ff71f5b44498')->get())[0];
         $faker = \Faker\Factory::create();
 
         $currentRents = Rent::where('user_id', $user->id)->where('status_id', RentStatusesEnum::Open)->get();
@@ -38,15 +39,6 @@ class RentContorller extends Controller
             }
 
             $rent = new Rent;
-            // dd($rent);
-            // Rent::create([
-            //     'id' => $faker->uuid,
-            //     'duration' => null,
-            //     'date_of_rent' => now(),
-            //     'status_id' => RentStatusesEnum::Open,
-            //     'car_id' => $car->id,
-            //     'user_id' => $user->id
-            // ]);
             $rent->id = $faker->uuid;
             $rent->duration = 0;
             $rent->date_of_rent = now();
@@ -63,6 +55,7 @@ class RentContorller extends Controller
 
     public function rentClose(Request $request)
     {
+        $faker = \Faker\Factory::create();
         $user = Auth::user();
         // dd($user->id);
         $params = $request->all();
@@ -80,7 +73,7 @@ class RentContorller extends Controller
 
         if (count($currentRents) > 0) {
 
-            $sum = 0;
+            $totalSum = 0;
             for ($i = 0; $i < count($currentRents); $i++) {
                 $currentRents[$i]->status_id = $params['incidents'] == 0 ? RentStatusesEnum::Close : RentStatusesEnum::ClosedWithIncident;      // the status with which the rent will be closed
                 $currentRents[$i]->save();      // closing the rent
@@ -91,18 +84,27 @@ class RentContorller extends Controller
 
                 $current_car = (Car::where('id', $currentRents[$i]->car_id)->get())[0];     // the car for which the rental is open
                 $rate_of_carrent_car = (RatingCategory::where('id', $current_car->category_id)->get())[0]->rate;    // the rate of the current car
-                $sum += (int)round($rate_of_carrent_car * $rent_time);  // the amount of the current lease
+                $sum = (int)round($rate_of_carrent_car * $rent_time);          // the amount of the current lease
+                $totalSum += (int)round($rate_of_carrent_car * $rent_time); 
 
                 if (0 < $user->rating && $user->rating < 5) {
                     $user->rating += $params['incidents'] == 0 ? 0.15 : -0.15 * $params['incidents'];
                 };
                 $current_car->accidents += (int)$params['incidents'];
                 $current_car->save();
+
+                $operation = new Operation;
+                $operation->id = $faker->uuid;
+                $operation->sum = $sum;
+                $operation->type = OperationTypesEnum::Rent;
+                $operation->rent_id = $currentRents[$i]->id;
+                $operation->user_id = $user->id;
+                $operation->save();
             };
-            $user->score -= $sum;
+            $user->score -= $totalSum;
             $user->save();
 
-            return [0, 'Successfuly close', $sum];
+            return [0, 'Successfuly close', $totalSum];
         } else {
             return [1, "Haven't open lease"];
         }
