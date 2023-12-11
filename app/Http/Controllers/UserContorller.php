@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Rent;
+use App\Models\Operation;
 use Illuminate\Http\Request;
 use App\Enums\UserStatusesEnum;
 use App\Enums\RentStatusesEnum;
@@ -66,6 +67,33 @@ class UserContorller extends Controller
         }
 
         return $result;
+    }
+
+    public function addingFunds(Request $request)
+    {
+        $user = Auth::user();
+        $params = $request->all();
+        $faker = \Faker\Factory::create();
+
+        if (!array_key_exists('fund', $params)) {
+            return 'The required "fund" argument is missing';
+        }
+        if ($params['fund'] < 0) {
+            return 'the "fund" argument must be greater than zero';
+        }
+
+        $operation = new Operation;
+        $operation->id = $faker->uuid;
+        $operation->sum = $params['fund'];
+        $operation->type = OperationTypesEnum::Replenishment;
+        $operation->user_id = $user->id;
+
+        $user->score += $params['fund'];
+
+        $operation->save();
+        $user->save();
+
+        return 'Successfuly adding. Current funds: ' . $user->score;
     }
 
     /**

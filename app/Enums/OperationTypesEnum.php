@@ -5,9 +5,7 @@ namespace App\Enums;
 enum OperationTypesEnum: int
 {
 	case Rent = 0;
-	case Fine = 1;
-	case Replenishment = 2;
-	case Cashback = 3;
+	case Replenishment = 1;
 
 	public static function randomValue(): string
     {
