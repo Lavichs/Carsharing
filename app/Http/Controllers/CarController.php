@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use \Cache;
 use App\Models\Car;
 use App\Models\Rent;
 use App\Models\Brand;
@@ -19,7 +20,11 @@ class CarController extends Controller
      */
     public function allCars()
     {
-        $cars = Car::all();
+        $cars = Cache::remember('cars', now()->addMinutes(5), function() {
+            return Car::all();
+        });
+
+        // $cars = Car::all();
         $models = ModelCar::all();
         $brands = Brand::all();
         $manufacturers = Manufacturer::all();
@@ -48,7 +53,21 @@ class CarController extends Controller
     public function certainCar(Request $request)
     {
         $params = $request->all();
-        $car = (Car::where('id', $params['id'])->get())[0];
+        if (!array_key_exists('car_id', $params)) {
+            return 'The required "car_id" argument is missing';
+        }
+
+        if (Cache::has($params['car_id'])) {
+            $car = Cache::get($params['car_id']);
+        }
+        else {
+            $car = (Car::where('id', $params['car_id'])->get())[0];
+            Cache::put($params['car_id'], $car, now()->addMinutes(10));
+        }
+
+        // $car = Cache::remember($params['car_id'], now()->addMinutes(5), function($params) {
+        //     return (Car::where('id', $params['car_id'])->get())[0];
+        // }); 
 
         $models = ModelCar::all();
         $brands = Brand::all();
