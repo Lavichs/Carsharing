@@ -33,6 +33,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
 
             'telNumber' => $this->faker->e164PhoneNumber,
+            'isAdmin' => rand(1, 5) == 1 ? true : null,
             'status' => UserStatusesEnum::randomValue(),
             'score' => rand(500, 5000) * 100,
             'rating' => rand(200, 500),
