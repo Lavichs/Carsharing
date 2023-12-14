@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Enums\CarEnginesEnum;
 use App\Enums\CarStatusesEnum;
 use App\Models\RatingCategory;
+use Illuminate\Support\Facades\Auth;
 
 class CarController extends Controller
 {
@@ -128,12 +129,19 @@ class CarController extends Controller
      */
     public function destroy(Request $request)
     {
-        $params = $request->all();
-        $car = (Car::where('id', $params['id'])->get())[0];
-        $car->delete();
+        $user = Auth::user();
+        if ($user->isAdmin) {
+            $params = $request->all();
+            $car = (Car::where('id', $params['id'])->get())[0];
+            $car->delete();
 
+            return response()->json([
+                'message' => 'Successfuly deleted'
+            ]);
+        }
         return response()->json([
-            'message' => 'Successfuly deleted'
+            'message' => 'insufficient user rights'
         ]);
+        
     }
 }
