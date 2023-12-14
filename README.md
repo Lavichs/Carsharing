@@ -9,10 +9,10 @@ Car sharing is implemented on the php - Laravel framework. The application has t
 ## About the project
 ### Technologies a used
 
-Laravel 10
-PHP 8.1
-RabbitMQ
-Redis
-JWT-auth
+- Laravel 10
+- PHP 8.1
+- RabbitMQ
+- Redis
+- JWT-auth
 
 
