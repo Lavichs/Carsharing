@@ -45,11 +45,19 @@ Route::group(['namespace' => 'App\Http\Controllers\\', 'middleware' => 'jwt.auth
 	Route::post('/action/rent_open', 'RentContorller@rentOpen');
 	Route::post('/action/rent_close', 'RentContorller@rentClose');
 	Route::post('/action/adding_funds', 'UserContorller@addingFunds');
-
+	
 	Route::post('/dictionary/delete_user', 'UserContorller@destroy');
 });
+
+
+// a test bench for the api
+Route::group(['namespace' => 'App\Http\Controllers\\'], function() {
+});
+
 
 // "critical" requests with access only for "admins"
 Route::group(['namespace' => 'App\Http\Controllers\\', 'middleware' => 'jwt.auth'], function() {
 	Route::post('/dictionary/delete_car', 'CarController@destroy');
+	Route::post('/dictionary/create_car', 'CarController@create');
+	Route::post('/dictionary/update_car', 'CarController@update');
 });
