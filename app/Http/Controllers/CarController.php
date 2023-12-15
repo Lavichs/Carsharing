@@ -6,7 +6,6 @@ use \Cache;
 use App\Models\Car;
 use App\Models\Rent;
 use App\Models\Brand;
-use App\Models\ModelCar;
 use App\Models\Manufacturer;
 use Illuminate\Http\Request;
 use App\Enums\CarEnginesEnum;
@@ -95,9 +94,77 @@ class CarController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $user = Auth::user();
+        if ($user->isAdmin) {
+            $params = $request->all();
+            if (!array_key_exists('status', $params)) {
+                return 'The required "status" argument is missing';
+            };
+            if (!array_key_exists('engineType', $params)) {
+                return 'The required "engineType" argument is missing';
+            };
+            if (!array_key_exists('number', $params)) {
+                return 'The required "number" argument is missing';
+            };
+            if (!array_key_exists('region', $params)) {
+                return 'The required "region" argument is missing';
+            };
+            if (!array_key_exists('accidents', $params)) {
+                return 'The required "accidents" argument is missing';
+            };
+            if (!array_key_exists('date_of_create', $params)) {
+                return 'The required "date_of_create" argument is missing';
+            };
+            if (!array_key_exists('manufacturer_id', $params)) {
+                return 'The required "manufacturer_id" argument is missing';
+            };
+            if (!array_key_exists('model_id', $params)) {
+                return 'The required "model_id" argument is missing';
+            };
+            if (!array_key_exists('brand_id', $params)) {
+                return 'The required "brand_id" argument is missing';
+            };
+            if (!array_key_exists('category_id', $params)) {
+                return 'The required "category_id" argument is missing';
+            };
+
+            $faker = \Faker\Factory::create();
+
+            $car = Car::where('number', $params['number'])->get();
+
+            if (count($car) > 0) {
+                return 'Car with this number already exist';
+            }
+            
+            try {
+                $car = new Car;
+                $car->id = $faker->uuid;
+                $car->status = $params['status'];
+                $car->engineType = $params['engineType'];
+                $car->number = $params['number'];
+                $car->region = $params['region'];
+                $car->accidents = $params['accidents'];
+                $car->date_of_create = date('Y-m-d', strtotime($params['date_of_create']));
+
+                // $manufacturer = (Manufacturer::where('id', $params['manufacturer_id'])->get())[0];
+                // dd($manufacturer);
+                $car->manufacturer_id = $params['manufacturer_id'];
+                $car->model_id = $params['model_id'];
+                $car->brand_id = $params['brand_id'];
+                $car->category_id = $params['category_id'];
+
+                $car->save();
+
+                return $car;
+            } catch (Exception $e) {
+                return 'Creation error' . $e->getMessage() . "\n";
+            }
+        }
+        return response()->json([
+            'message' => 'insufficient user rights'
+        ]);
     }
 
     /**
@@ -141,7 +208,6 @@ class CarController extends Controller
         }
         return response()->json([
             'message' => 'insufficient user rights'
-        ]);
-        
+        ]);        
     }
 }
