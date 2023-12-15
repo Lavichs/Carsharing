@@ -188,7 +188,33 @@ class CarController extends Controller
      */
     public function update(Request $request, Car $car)
     {
-        //
+        $user = Auth::user();
+        if ($user->isAdmin) {
+            $params = $request->all();
+            if (!array_key_exists('car_id', $params)) {
+                    return 'The required "car_id" argument is missing';
+                };
+
+            $car = (Car::where('id', $params['car_id'])->get())[0];
+
+            foreach ($params as $param) {
+                if ($param === $params['car_id']) {
+                    continue;
+                }
+
+                try {
+                    $car->{array_search($param, $params)} = $param;
+                    $car->save();
+                } catch (Exception $e) {
+                    dump('Error' . $e->getMessage() . "\n");
+                }
+            }
+        }
+        return response()->json([
+            'message' => 'insufficient user rights'
+        ]);
+        
+        
     }
 
     /**
